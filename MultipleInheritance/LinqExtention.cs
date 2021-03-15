@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,43 +7,93 @@ using MultipleInheritance;
 
 namespace System.Linq
 {
+    public class MyEnumerator<T> : IEnumerator<T>, IEnumerable<T>
+    {
+        public List<T> Data;
+        private int index = -1;
+        public T Current
+        {
+            get
+            {
+                if (index == -1)
+                    MoveNext();
+                return Data[index];
+            }
+        }
+
+        object IEnumerator.Current => throw new NotImplementedException();
+
+        public void Dispose()
+        {
+            
+        }
+
+        public bool MoveNext()
+        {
+            int position = this.index + 1;
+
+            if (position >= 0 && position < this.Data.Count)
+            {
+                this.index = position;
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+
+        public void Reset()
+        {
+            this.index = 0;
+        }
+
+        public IEnumerator<T> GetEnumerator() => Data.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => Data.GetEnumerator();
+
+        public MyEnumerator() { Data = new List<T>(); }
+
+        public MyEnumerator(List<T> data)
+        {
+            Data = new List<T>();
+            Data.AddRange(data);
+            this.index = 0;
+        }
+    }
     public static class LinqExtention
     {
-        public static MyIterator<T> MyTake<T>(this MyIterator<T> collection, int count)
+        public static IEnumerable<T> MyTake<T>(this IEnumerable<T> collection, int count)
         {
-            if (collection.Count() < count)
+            if (collection.Data.Count < count)
             {
                 throw new IndexOutOfRangeException();
             }
             var result = new T[count];
             int i = 0;
-            foreach(var item in collection)
+            while(i < count)
             {
-                if (i < count)
+                result.Add(collection.Current);
+                if (collection.MoveNext())
                 {
-                    result[i] = item;
+                    result.Add(item);
                 }
-                i++;
             }
-            return new MyIterator<T>(result);
+            return result;
         }
 
-        public static MyIterator<T> MyWhere<T>(this MyIterator<T> collection, Predicate<T> condition)
+        public static IEnumerable<T> MyWhere<T>(this IEnumerable<T> collection, Predicate<T> condition)
         {
-            var result = new T[1];
-            var i = 0;
+            var result = new List<T>();
             foreach(var item in collection)
             {
-                if (condition.Invoke(item))
+                if (condition.Invoke(collection.Current))
                 {
-                    result[i] = item;
-                    i++;
-                    var temp = new T[i+1];
-                    result.CopyTo(temp, 0);
-                    result = temp;
+                    result.Add(item);
                 }
             }
-            return new MyIterator<T>(result);
+            return result;
         }
     }
 }
