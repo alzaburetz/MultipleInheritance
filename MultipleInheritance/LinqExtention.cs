@@ -2,40 +2,47 @@
 using System.Collections.Generic;
 using System.Text;
 
+using MultipleInheritance;
+
 namespace System.Linq
 {
     public static class LinqExtention
     {
-        public static IEnumerable<T> MyTake<T>(this IEnumerable<T> collection, int count)
+        public static MyIterator<T> MyTake<T>(this MyIterator<T> collection, int count)
         {
             if (collection.Count() < count)
             {
                 throw new IndexOutOfRangeException();
             }
-            var result = new List<T>();
+            var result = new T[count];
             int i = 0;
             foreach(var item in collection)
             {
                 if (i < count)
                 {
-                    result.Add(item);
+                    result[i] = item;
                 }
                 i++;
             }
-            return result;
+            return new MyIterator<T>(result);
         }
 
-        public static IEnumerable<T> MyWhere<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        public static MyIterator<T> MyWhere<T>(this MyIterator<T> collection, Predicate<T> condition)
         {
-            var result = new List<T>();
+            var result = new T[1];
+            var i = 0;
             foreach(var item in collection)
             {
                 if (condition.Invoke(item))
                 {
-                    result.Add(item);
+                    result[i] = item;
+                    i++;
+                    var temp = new T[i+1];
+                    result.CopyTo(temp, 0);
+                    result = temp;
                 }
             }
-            return result;
+            return new MyIterator<T>(result);
         }
     }
 }
