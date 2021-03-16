@@ -7,7 +7,7 @@ namespace MultipleInheritance
 {
     public class MyIterator<T> : IEnumerator<T>, IEnumerable<T>
     {
-        List<T> data;
+        T[] data;
         int index;
 
         public T Current => data[index];
@@ -20,12 +20,12 @@ namespace MultipleInheritance
 
         public IEnumerator<T> GetEnumerator()
         {
-            return data.GetEnumerator();
+            return ((IEnumerable<T>)data).GetEnumerator();
         }
 
         public bool MoveNext()
         {
-            return index++ <= data.Count;
+            return index++ <= data.Length;
         }
 
         public void Reset()
@@ -38,10 +38,9 @@ namespace MultipleInheritance
             return (IEnumerator)data.GetEnumerator();
         }
 
-        public MyIterator(IEnumerable<T> _data)
+        public MyIterator(T[] _data)
         {
-            this.data = new List<T>();
-            this.data.AddRange(_data);
+            this.data = _data;
         }
 
     }

@@ -8,7 +8,7 @@ namespace MultipleInheritance
     {
         public static MyIterator<int> GetEnumeration()
         {
-            return new MyIterator<int>(Enumerable.Range(0, 100));
+            return new MyIterator<int>(Enumerable.Range(0, 100).ToArray());
         }
 
         static void Main(string[] args)
