@@ -15,6 +15,9 @@ namespace MultipleInheritance
     {
         T[] data;
         int index;
+        int version;
+        int enumeration_verion;
+        bool isReadOnly;
         public int Count => data.Length;
 
         public T Current => data[index];
@@ -27,6 +30,11 @@ namespace MultipleInheritance
             {
                 throw new InvalidOperationException();
             }
+
+            if (this.isReadOnly && version == enumeration_verion)
+            {
+                throw new InvalidOperationException();
+            }
             var dequeue = data[0];
 
             var temp = new T[--index];
@@ -35,7 +43,7 @@ namespace MultipleInheritance
                 temp[i - 1] = data[i];
             }
             data = temp;
-
+            version++;
 
             return dequeue;
         }
@@ -49,17 +57,25 @@ namespace MultipleInheritance
             if (data == null)
             {
                 throw new InvalidOperationException();
-            }    
+            } 
+            
+            if (this.isReadOnly && version == enumeration_verion)
+            {
+                throw new InvalidOperationException();
+            }
             var temp = new T[++index];
             if (this.data != null)
                 this.data.CopyTo(temp, 0);
             this.data = temp;
             this.data[index - 1] = data;
+            version++;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return ((IEnumerable<T>)this.data).GetEnumerator();
+            enumeration_verion = version;
+            isReadOnly = true;
+            return ((IReadOnlyCollection<T>)this.data).GetEnumerator();
         }
 
         public bool MoveNext()
@@ -70,6 +86,7 @@ namespace MultipleInheritance
         public void Reset()
         {
             index = -1;
+            version = 0;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
