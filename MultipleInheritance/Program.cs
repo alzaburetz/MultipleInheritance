@@ -38,11 +38,11 @@ namespace MultipleInheritance
         new Weather { Now = "Rainy", City = "Tallin" },
     };
 
-            var join = persons.FullJoin(weathers, x => x.City, y => y.City, (first, second) => new { first, second});
+            var join = persons.FullJoin(weathers, x => x.City, y => y.City,(first, second, id) => new { first, second, id});
 
             foreach (var j in join)
             {
-                Console.WriteLine($"{ j.first?.Name ?? "NULL" } | { j.second?.Now ?? "NULL" }");
+                Console.WriteLine($"{ j.first?.Name ?? "NULL" }\t\t | { j.second?.Now ?? "NULL" }\t | { j.id ?? "NULL"}");
             }
         }
     }
