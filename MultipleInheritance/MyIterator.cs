@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,12 +8,11 @@ namespace MultipleInheritance
 {
     public class MyIterator<T> : IEnumerator<T>, IEnumerable<T>
     {
-        T[] data;
-        int index;
+        IEnumerable<T> data;
 
-        public T Current => data[index];
+        public T Current => data.GetEnumerator().Current;
 
-        object IEnumerator.Current => data[index];
+        object IEnumerator.Current => data.GetEnumerator().Current;
 
         public void Dispose()
         {
@@ -25,23 +25,27 @@ namespace MultipleInheritance
 
         public bool MoveNext()
         {
-            return index++ <= data.Length;
+            return data.GetEnumerator().MoveNext();
         }
 
         public void Reset()
         {
-            index = -1;
+            data.GetEnumerator().Reset();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return (IEnumerator)data.GetEnumerator();
+            throw new NotImplementedException();
         }
 
-        public MyIterator(T[] _data)
+        public MyIterator(IEnumerable<T> _data)
         {
             this.data = _data;
         }
 
+        public MyIterator()
+        {
+            this.data = Enumerable.Empty<T>();
+        }
     }
 }

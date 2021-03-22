@@ -9,41 +9,35 @@ namespace System.Linq
 { 
     public static class LinqExtention
     {
-        public static MyIterator<T> MyTake<T>(this MyIterator<T> collection, int count)
+        public static IEnumerable<T> MyTake<T>(this IEnumerable<T> col, int count)
         {
-            if (collection.Count() < count)
-            {
-                throw new IndexOutOfRangeException();
-            }
-            var result = new T[count];
+            var result = Enumerable.Empty<T>();
             int i = 0;
+            var collection = col.GetEnumerator();
             while(i < count)
             {
                 if (collection.MoveNext())
                 {
-                    result[i] = collection.Current;
+                    result = result.Append(collection.Current);
                     i++;
                 }
             }
-            return new MyIterator<T>(result);
+
+            return result;
         }
 
-        public static MyIterator<T> MyWhere<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        public static IEnumerable<T> MyWhere<T>(this IEnumerable<T> collection, Predicate<T> condition)
         {
-            var result = new T[1];
+            var result = Enumerable.Empty<T>();
             int i = 0;
             foreach(var item in collection)
             {
                 if (condition.Invoke(item))
                 {
-                    result[i] = item;
-                    i++;
-                    var temp = new T[i + 1];
-                    result.CopyTo(temp, 0);
-                    result = temp;
+                    result = result.Append(item);
                 }
             }
-            return new MyIterator<T>(result);
+            return result;
         }
     }
 }
