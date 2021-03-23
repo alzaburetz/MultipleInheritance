@@ -6,7 +6,7 @@ namespace MultipleInheritance
 {
     class Program
     {
-        public static IEnumerable<int> GetEnumeration()
+        public static MyIterator<int> GetEnumeration()
         {
             return new MyIterator<int>(Enumerable.Range(0, 100));
         }

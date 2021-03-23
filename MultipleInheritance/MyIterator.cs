@@ -47,5 +47,10 @@ namespace MultipleInheritance
         {
             this.data = Enumerable.Empty<T>();
         }
+
+        public MyIterator<T> Append(T item)
+        {
+            return new MyIterator<T>(data.Append(item));
+        }
     }
 }

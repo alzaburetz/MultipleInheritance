@@ -9,9 +9,9 @@ namespace System.Linq
 { 
     public static class LinqExtention
     {
-        public static IEnumerable<T> MyTake<T>(this IEnumerable<T> col, int count)
+        public static MyIterator<T> MyTake<T>(this MyIterator<T> col, int count)
         {
-            var result = Enumerable.Empty<T>();
+            var result = new MyIterator<T>();
             int i = 0;
             var collection = col.GetEnumerator();
             while(i < count)
@@ -26,9 +26,9 @@ namespace System.Linq
             return result;
         }
 
-        public static IEnumerable<T> MyWhere<T>(this IEnumerable<T> collection, Predicate<T> condition)
+        public static MyIterator<T> MyWhere<T>(this MyIterator<T> collection, Predicate<T> condition)
         {
-            var result = Enumerable.Empty<T>();
+            var result = new MyIterator<T>();
             int i = 0;
             foreach(var item in collection)
             {
