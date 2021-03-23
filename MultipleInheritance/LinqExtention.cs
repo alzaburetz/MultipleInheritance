@@ -13,7 +13,6 @@ namespace MultipleInheritance
             var right = weathers.ToLookup(weatherPredicate);
 
             foreach (var innerGrouping in right)
-                if (left.Contains(innerGrouping.Key))
                     foreach (var item in innerGrouping)
                         yield return filter(null, item, Guid.NewGuid());
 
