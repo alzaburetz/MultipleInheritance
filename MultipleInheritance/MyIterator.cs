@@ -57,9 +57,6 @@ namespace MultipleInheritance
         }
         public override bool MoveNext()
         {
-           //while (predicate.Invoke(Current))
-           //     data.MoveNext();
-           // return data.MoveNext();
            while (data.MoveNext())
             {
                 if (predicate(data.Current))
@@ -94,9 +91,9 @@ namespace MultipleInheritance
             }
             return false;
         }
-        public MyTakeIterator(IEnumerator<T> source, int count)
+        public MyTakeIterator(MyIterator<T> source, int count)
         {
-            data = (MyIterator<T>)source;
+            data = source;
             this.count = count;
         }
     }
