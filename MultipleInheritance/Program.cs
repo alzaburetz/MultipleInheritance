@@ -16,6 +16,13 @@ namespace MultipleInheritance
         public string City { get; set; }
     }
 
+    public class Result
+    {
+        public string id => second?.City;
+        public Person first;
+        public Weather second;
+    }
+
     public class Weather
     {
         public string City { get; set; }
@@ -38,7 +45,7 @@ namespace MultipleInheritance
         new Weather { Now = "Rainy", City = "Tallin" },
     };
 
-            var join = persons.FullJoin(weathers, x => x.City, y => y.City,(first, second, id) => new { first, second, id});
+            var join = persons.FullJoin<Person, Weather, Result>(weathers, x => x.City, y => y.City,(first, second) => new Result{ first = first, second = second });
 
             foreach (var j in join)
             {
