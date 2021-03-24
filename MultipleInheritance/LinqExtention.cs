@@ -9,35 +9,14 @@ namespace System.Linq
 { 
     public static class LinqExtention
     {
-        public static MyIterator<T> MyTake<T>(this MyIterator<T> col, int count)
+        public static MyTakeIterator<T> MyTake<T>(this IEnumerator<T> col, int count)
         {
-            var result = new MyIterator<T>();
-            int i = 0;
-            var collection = col.GetEnumerator();
-            while(i < count)
-            {
-                if (collection.MoveNext())
-                {
-                    result = result.Append(collection.Current);
-                    i++;
-                }
-            }
-
-            return result;
+            return new MyTakeIterator<T>(col, count);
         }
 
-        public static MyIterator<T> MyWhere<T>(this MyIterator<T> collection, Predicate<T> condition)
+        public static MyWhereIterator<T> MyWhere<T>(this IEnumerator<T> collection, Func<T, bool> condition)
         {
-            var result = new MyIterator<T>();
-            int i = 0;
-            foreach(var item in collection)
-            {
-                if (condition.Invoke(item))
-                {
-                    result = result.Append(item);
-                }
-            }
-            return result;
+            return new MyWhereIterator<T>(collection, condition);
         }
     }
 }
