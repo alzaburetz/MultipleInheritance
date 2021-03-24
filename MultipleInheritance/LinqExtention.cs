@@ -12,14 +12,18 @@ namespace MultipleInheritance
             var left = persons.ToLookup(personPredicate);
             var right = weathers.ToLookup(weatherPredicate);
 
+            var join = new HashSet<TResult>();
+
             foreach (var innerGrouping in right)
-                    foreach (var item in innerGrouping)
-                        yield return filter(default(TSource), item);
+                foreach (var item in innerGrouping)
+                    join.Add(filter(default(TSource), item));
 
             foreach (var outerGrouping in left)
                 foreach (var item in right[outerGrouping.Key].DefaultIfEmpty())
                     foreach (var item_ in outerGrouping)
-                        yield return filter(item_, item);
+                        join.Add(filter(item_, item));
+
+            return join;
         }
     }
 }
