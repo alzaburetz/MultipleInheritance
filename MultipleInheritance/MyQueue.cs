@@ -13,11 +13,11 @@ namespace MultipleInheritance
     }
     public class MyQueue<T> : IQueue<T>
     {
-        public int Count => _data.Length;
+        public int Count => _index;
 
-        public T Current => _data[_index];
+        public T Current => _head.Data;
 
-        object IEnumerator.Current => _data[_index];
+        object IEnumerator.Current => _head.Data;
 
         public T Dequeue()
         {
@@ -30,17 +30,12 @@ namespace MultipleInheritance
             {
                 throw new InvalidOperationException();
             }
-            var dequeue = _data[0];
 
-            var temp = new T[--_index];
-            for (int i = 1; i < _data.Length; i++)
-            {
-                temp[i - 1] = _data[i];
-            }
-            _data = temp;
+            T output = _head.Data;
+            _head = _head.Next;
+            _index--;
             _version++;
-
-            return dequeue;
+            return output;
         }
 
         public void Dispose()
@@ -52,51 +47,69 @@ namespace MultipleInheritance
             if (data == null)
             {
                 throw new InvalidOperationException();
-            } 
-            
-            if (_version == _enumeration_verion)
-            {
-                throw new InvalidOperationException();
             }
-            var temp = new T[++_index];
-            if (this._data != null)
-                this._data.CopyTo(temp, 0);
-            this._data = temp;
-            this._data[_index - 1] = data;
+            Node<T> node = new Node<T>(data);
+            Node<T> tempNode = _tail;
+            _tail = node;
+            if (_index == 0)
+                _head = _tail;
+            else
+                tempNode.Next = _tail;
             _version++;
+            _index++;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
             _enumeration_verion = _version;
-            return ((IReadOnlyCollection<T>)this._data).GetEnumerator();
+            Node<T> current = _head;
+            while (current != null)
+            {
+                yield return current.Data;
+                current = current.Next;
+            }
         }
 
         public bool MoveNext()
         {
-            return ++_index < _data.Length;
+            if (_version != _enumeration_verion)
+            {
+                throw new InvalidOperationException();
+            }
+            return true;
         }
-
         public void Reset()
         {
-            _index = -1;
+            _index = 0;
             _version = 0;
+            _enumeration_verion = -1;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this._data.GetEnumerator();
+            _enumeration_verion = _version;
+            return this.GetEnumerator();
         }
 
         public MyQueue()
         {
-            this._data = new T[0];
         }
 
 
-        T[] _data;
+        Node<T> _head;
+        Node<T> _tail;
         int _index;
         int _version;
         int _enumeration_verion = -1;
+    }
+
+    public class Node<T>
+    {
+        public T Data { get; set; }
+        public Node<T> Next { get; set; }
+        public Node(T data)
+        {
+            Data = data;
+        }
     }
 }
