@@ -133,3 +133,5 @@ $RECYCLE.BIN/
 ../bin
 ../obj
 _NCrunch*
+/.vs/MultipleInheritance/DesignTimeBuild
+/.vs/MultipleInheritance/v16/TestStore/0
