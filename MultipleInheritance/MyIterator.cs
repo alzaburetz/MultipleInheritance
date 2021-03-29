@@ -6,56 +6,16 @@ using System.Text;
 
 namespace MultipleInheritance
 {
-    public class MyIterator<T> : IEnumerator<T>, IEnumerable<T>
+    public class MyWhereIterator<T> : IEnumerator<T>, IEnumerable<T>
     {
         IEnumerator<T> data;
-
+        Func<T, bool> predicate;
         public T Current => data.Current;
 
-        object IEnumerator.Current => data.Current;
+        object IEnumerator.Current => Current;
 
-        public void Dispose()
-        {
-        }
-        public virtual MyIterator<T> GetEnumerator() => this;
-
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() => data;
-        public virtual bool MoveNext()
-        {
-            return data.MoveNext();
-        }
-
-        public void Reset()
-        {
-            data.Reset();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        public MyIterator(IEnumerable<T> _data)
-        {
-            this.data = ((IEnumerable<T>)_data).GetEnumerator();
-        }
-
-        public MyIterator()
-        {
-            this.data = Enumerable.Empty<T>().GetEnumerator();
-        }
-    }
-
-    public class MyWhereIterator<T> : MyIterator<T>
-    {
-        MyIterator<T> data;
-        Func<T, bool> predicate;
-        public new T Current => data.Current;
-        public MyWhereIterator<T> GetEnumerator()
-        {
-            return this;
-        }
-        public override bool MoveNext()
+        public IEnumerator<T> GetEnumerator() => this;
+        public bool MoveNext()
         {
            while (data.MoveNext())
             {
@@ -66,22 +26,42 @@ namespace MultipleInheritance
             }
             return false;
         }
-        public MyWhereIterator(IEnumerator<T> source,  Func<T, bool> predicate)
+
+        public void Reset()
         {
-            this.data = (MyIterator<T>)source;
+            data.Reset();
+        }
+
+        public void Dispose()
+        {
+            data.Dispose();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)data;
+        }
+
+        public MyWhereIterator(IEnumerable<T> source,  Func<T, bool> predicate)
+        {
+            this.data = source.GetEnumerator();
             this.predicate = predicate;
         }
     }
 
-    public class MyTakeIterator<T> : MyIterator<T>
+    public class MyTakeIterator<T> : IEnumerator<T>, IEnumerable<T>
     {
-        MyIterator<T> data;
+        IEnumerator<T> data;
         int count;
         int amount = 0;
-        public new T Current => data.Current;
-        public MyTakeIterator<T> GetEnumerator() => this;
 
-        public override bool MoveNext()
+        public T Current => data.Current;
+
+        object IEnumerator.Current => Current;
+
+        public IEnumerator<T> GetEnumerator() => this;
+
+        public bool MoveNext()
         {
             while (count > amount)
             {
@@ -91,9 +71,25 @@ namespace MultipleInheritance
             }
             return false;
         }
-        public MyTakeIterator(MyIterator<T> source, int count)
+
+        public void Reset()
         {
-            data = source;
+            data.Reset();
+        }
+
+        public void Dispose()
+        {
+            data.Dispose();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)data;
+        }
+
+        public MyTakeIterator(IEnumerable<T> source, int count)
+        {
+            data = source.GetEnumerator();
             this.count = count;
         }
     }
