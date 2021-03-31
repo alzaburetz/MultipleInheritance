@@ -1,9 +1,7 @@
-using FluentAssertions;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
 using System.Linq;
+
+using FluentAssertions;
 using Xunit;
 
 using MultipleInheritance;

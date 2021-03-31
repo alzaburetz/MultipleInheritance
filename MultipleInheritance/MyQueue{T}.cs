@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MultipleInheritance
 {
@@ -18,7 +17,6 @@ namespace MultipleInheritance
         public Node<T> Head => _head;
 
         public Node<T> Tail => _tail;
-        public bool CheckVersion() => _version != _enumeration_version;
 
         public T Dequeue()
         {
@@ -26,8 +24,8 @@ namespace MultipleInheritance
             {
                 throw new InvalidOperationException();
             }
-            var output = this._head.Data;
-            this._head = _head.Next;
+            var output = _head.Data;
+            _head = _head.Next;
             _size--;
             _version++;
             return output;
@@ -52,20 +50,18 @@ namespace MultipleInheritance
 
         public IEnumerator<T> GetEnumerator()
         {
-            _enumeration_version = _version;
             return new MyQueueEnumerator<T>(this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return (IEnumerator)GetEnumerator();
+            return GetEnumerator();
         }
 
         private Node<T> _head;
         private Node<T> _tail;
         private int _size;
-        private int _version;
-        private int _enumeration_version;
+        internal int _version;
     }
 
     public class Node<T>
@@ -80,53 +76,67 @@ namespace MultipleInheritance
 
     public class MyQueueEnumerator<T> : IEnumerator<T>
     {
-        public T Current => currentElement;
+        public T Current => _currentElement;
 
         object IEnumerator.Current => Current;
 
         public void Dispose()
         {
-
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public bool MoveNext()
         {
-            if (_q.CheckVersion())
+            if (_version != _q._version)
             {
                 throw new InvalidOperationException();
             }
             if (_head != null)
             {
-                currentElement = _head.Data;
+                _currentElement = _head.Data;
                 _head = _head.Next;
             }
             else
             {
-                currentElement = _tail.Data;
+                _currentElement = _tail.Data;
                 _head = _tail;
             }
-            _index--;
-            return _index >= 0;
+            _count--;
+            return _count >= 0;
         }
 
         public void Reset()
         {
-            _index = _q.Count;
+            _count = _q.Count;
             _head = _q.Head;
         }
 
         public MyQueueEnumerator(MyQueue<T> queue)
         {
             _q = queue;
+            _version = _q._version;
             _head = _q.Head;
             _tail = _q.Tail;
-            _index = _q.Count;
+            _count = _q.Count;
         }
 
-        private readonly MyQueue<T> _q;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+        }
+
+        private MyQueue<T> _q;
         private Node<T> _head;
         private Node<T> _tail;
-        private int _index;
-        private T currentElement;
+        private int _count;
+        private T _currentElement;
+        private int _version;
+        private bool _disposed;
     }
 }
