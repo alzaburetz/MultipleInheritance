@@ -96,19 +96,18 @@ namespace MultipleInheritance
             {
                 _currentElement = _head.Data;
                 _head = _head.Next;
+                return true;
             }
             else
             {
                 _currentElement = _tail.Data;
                 _head = _tail;
+                return false;
             }
-            _count--;
-            return _count >= 0;
         }
 
         public void Reset()
         {
-            _count = _q.Count;
             _head = _q.Head;
         }
 
@@ -118,7 +117,6 @@ namespace MultipleInheritance
             _version = _q._version;
             _head = _q.Head;
             _tail = _q.Tail;
-            _count = _q.Count;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -134,7 +132,6 @@ namespace MultipleInheritance
         private MyQueue<T> _q;
         private Node<T> _head;
         private Node<T> _tail;
-        private int _count;
         private T _currentElement;
         private int _version;
         private bool _disposed;
