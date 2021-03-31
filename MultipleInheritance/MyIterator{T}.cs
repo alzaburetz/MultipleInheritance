@@ -53,15 +53,7 @@ namespace MultipleInheritance
 
         public IEnumerator<T> GetEnumerator() => this;
 
-        public bool MoveNext()
-        {
-            while (_count > _amount && _data.MoveNext())
-            {
-                _amount++;
-                return true;
-            }
-            return false;
-        }
+        public bool MoveNext() => _count > _amount++ && _data.MoveNext();
 
         public void Reset()
         {

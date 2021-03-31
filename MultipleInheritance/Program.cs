@@ -13,7 +13,7 @@ namespace MultipleInheritance
 
         static void Main(string[] args)
         {
-            foreach(var item in GetEnumeration().MyWhere(x => x % 2 == 0).MyTake(10000000))
+            foreach(var item in GetEnumeration().MyWhere(x => x % 2 == 0).MyTake(5))
             {
                 Console.WriteLine(item);
             }
