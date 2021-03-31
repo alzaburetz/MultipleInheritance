@@ -8,18 +8,16 @@ namespace MultipleInheritance
 {
     public class MyWhereIterator<T> : IEnumerator<T>, IEnumerable<T>
     {
-        IEnumerator<T> data;
-        Func<T, bool> predicate;
-        public T Current => data.Current;
+        public T Current => _data.Current;
 
         object IEnumerator.Current => Current;
 
         public IEnumerator<T> GetEnumerator() => this;
         public bool MoveNext()
         {
-           while (data.MoveNext())
+            while (_data.MoveNext())
             {
-                if (predicate(data.Current))
+                if (_predicate(_data.Current))
                 {
                     return true;
                 }
@@ -29,30 +27,29 @@ namespace MultipleInheritance
 
         public void Reset()
         {
-            data.Reset();
+            _data.Reset();
         }
 
         public void Dispose()
         {
-            data.Dispose();
+            _data.Dispose();
         }
 
         IEnumerator IEnumerable.GetEnumerator() => this;
 
         public MyWhereIterator(IEnumerable<T> source,  Func<T, bool> predicate)
         {
-            this.data = source.GetEnumerator();
-            this.predicate = predicate;
+            _data = source.GetEnumerator();
+            _predicate = predicate;
         }
+
+        private IEnumerator<T> _data;
+        private Func<T, bool> _predicate;
     }
 
     public class MyTakeIterator<T> : IEnumerator<T>, IEnumerable<T>
     {
-        IEnumerator<T> data;
-        int count;
-        int amount = 0;
-
-        public T Current => data.Current;
+        public T Current => _data.Current;
 
         object IEnumerator.Current => Current;
 
@@ -60,9 +57,9 @@ namespace MultipleInheritance
 
         public bool MoveNext()
         {
-            while (count > amount && data.MoveNext())
+            while (_count > _amount && _data.MoveNext())
             {
-                amount++;
+                _amount++;
                 return true;
             }
             return false;
@@ -70,20 +67,25 @@ namespace MultipleInheritance
 
         public void Reset()
         {
-            data.Reset();
+            _data.Reset();
         }
 
         public void Dispose()
         {
-            data.Dispose();
+            _data.Dispose();
         }
 
         IEnumerator IEnumerable.GetEnumerator() => this;
 
         public MyTakeIterator(IEnumerable<T> source, int count)
         {
-            data = source.GetEnumerator();
-            this.count = count;
+            _data = source.GetEnumerator();
+            _count = count;
         }
+
+
+        private IEnumerator<T> _data;
+        private int _count;
+        private int _amount = 0;
     }
 }
