@@ -57,6 +57,7 @@ namespace MultipleInheritance
 
         public void Reset()
         {
+            _amount = 0;
             _data.Reset();
         }
 
