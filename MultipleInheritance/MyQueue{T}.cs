@@ -14,10 +14,6 @@ namespace MultipleInheritance
     {
         public int Count => _size;
 
-        public Node<T> Head => _head;
-
-        public Node<T> Tail => _tail;
-
         public T Dequeue()
         {
             if (_size == 0)
@@ -61,7 +57,70 @@ namespace MultipleInheritance
         private Node<T> _head;
         private Node<T> _tail;
         private int _size;
-        internal int _version;
+        private int _version;
+
+        private class MyQueueEnumerator<T> : IEnumerator<T>
+        {
+            public T Current => _currentElement;
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            public bool MoveNext()
+            {
+                if (_version != _q._version)
+                {
+                    throw new InvalidOperationException();
+                }
+                if (_head != null)
+                {
+                    _currentElement = _head.Data;
+                    _head = _head.Next;
+                    return true;
+                }
+                else
+                {
+                    _currentElement = _tail.Data;
+                    _head = _tail;
+                    return false;
+                }
+            }
+
+            public void Reset()
+            {
+                _head = _q._head;
+            }
+
+            public MyQueueEnumerator(MyQueue<T> queue)
+            {
+                _q = queue;
+                _version = _q._version;
+                _head = _q._head;
+                _tail = _q._tail;
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+
+                _disposed = true;
+            }
+
+            private MyQueue<T> _q;
+            private Node<T> _head;
+            private Node<T> _tail;
+            private T _currentElement;
+            private int _version;
+            private bool _disposed;
+        }
     }
 
     public class Node<T>
@@ -72,68 +131,5 @@ namespace MultipleInheritance
         {
             Data = data;
         }
-    }
-
-    public class MyQueueEnumerator<T> : IEnumerator<T>
-    {
-        public T Current => _currentElement;
-
-        object IEnumerator.Current => Current;
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public bool MoveNext()
-        {
-            if (_version != _q._version)
-            {
-                throw new InvalidOperationException();
-            }
-            if (_head != null)
-            {
-                _currentElement = _head.Data;
-                _head = _head.Next;
-                return true;
-            }
-            else
-            {
-                _currentElement = _tail.Data;
-                _head = _tail;
-                return false;
-            }
-        }
-
-        public void Reset()
-        {
-            _head = _q.Head;
-        }
-
-        public MyQueueEnumerator(MyQueue<T> queue)
-        {
-            _q = queue;
-            _version = _q._version;
-            _head = _q.Head;
-            _tail = _q.Tail;
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-        }
-
-        private MyQueue<T> _q;
-        private Node<T> _head;
-        private Node<T> _tail;
-        private T _currentElement;
-        private int _version;
-        private bool _disposed;
     }
 }
