@@ -37,10 +37,7 @@ namespace MultipleInheritance
             data.Dispose();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return (IEnumerator)data;
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this;
 
         public MyWhereIterator(IEnumerable<T> source,  Func<T, bool> predicate)
         {
@@ -63,9 +60,8 @@ namespace MultipleInheritance
 
         public bool MoveNext()
         {
-            while (count > amount)
+            while (count > amount && data.MoveNext())
             {
-                data.MoveNext();
                 amount++;
                 return true;
             }
@@ -82,10 +78,7 @@ namespace MultipleInheritance
             data.Dispose();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return (IEnumerator)data;
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this;
 
         public MyTakeIterator(IEnumerable<T> source, int count)
         {
